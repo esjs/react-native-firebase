@@ -1,14 +1,20 @@
 package io.invertase.firebase.admob;
 
+import android.os.Bundle;
+import android.util.Log;
+
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
+import com.google.ads.mediation.admob.AdMobAdapter;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.VideoOptions;
+import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
 
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -56,8 +62,9 @@ class RNFirebaseAdMobUtils {
     return map;
   }
 
-  static AdRequest.Builder buildRequest(ReadableMap request) {
+  static AdRequest buildRequest(ReadableMap request) {
     AdRequest.Builder requestBuilder = new AdRequest.Builder();
+    Bundle extras = new Bundle();
 
     if (request.hasKey("isDesignedForFamilies")) {
       requestBuilder.setIsDesignedForFamilies(request.getBoolean("isDesignedForFamilies"));
@@ -74,6 +81,18 @@ class RNFirebaseAdMobUtils {
     if (request.hasKey("requestAgent")) {
       requestBuilder.setRequestAgent(request.getString("requestAgent"));
     }
+
+    if (request.hasKey("networkExtras")) {
+      Map<String, Object> networkExtras = request.getMap("networkExtras").toHashMap();
+
+      for (Map.Entry<String, Object> entry : networkExtras.entrySet()) {
+        String key = entry.getKey();
+        String value = (String) entry.getValue();
+        extras.putString(key, value);
+      }
+    }
+
+    requestBuilder.addNetworkExtrasBundle(AdMobAdapter.class, extras);
 
     if (request.hasKey("gender")) {
       String gender = request.getString("gender");
@@ -110,7 +129,7 @@ class RNFirebaseAdMobUtils {
       requestBuilder.addKeyword((String) word);
     }
 
-    return requestBuilder;
+    return requestBuilder.build();
   }
 
   static VideoOptions.Builder buildVideoOptions(ReadableMap options) {

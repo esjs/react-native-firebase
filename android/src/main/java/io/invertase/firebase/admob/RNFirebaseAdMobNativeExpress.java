@@ -13,9 +13,12 @@ import com.facebook.react.views.view.ReactViewGroup;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.NativeExpressAdView;
 import com.google.android.gms.ads.VideoController;
 import com.google.android.gms.ads.VideoOptions;
+import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
+import com.google.android.gms.ads.doubleclick.PublisherAdView;
 
 import java.util.Map;
 
@@ -30,7 +33,7 @@ public class RNFirebaseAdMobNativeExpress extends SimpleViewManager<ReactViewGro
   private RCTEventEmitter emitter;
   private Boolean requested = false;
   // Internal prop values
-  private AdRequest.Builder request;
+  private AdRequest request;
   private VideoOptions.Builder videoOptions;
   private AdSize size;
   private String unitId;
@@ -52,23 +55,23 @@ public class RNFirebaseAdMobNativeExpress extends SimpleViewManager<ReactViewGro
     viewGroup = new ReactViewGroup(themedReactContext);
     emitter = themedReactContext.getJSModule(RCTEventEmitter.class);
 
-    NativeExpressAdView adView = new NativeExpressAdView(context);
+    AdView adView = new AdView(context);
     viewGroup.addView(adView);
     setAdListener();
 
     return viewGroup;
   }
 
-  private NativeExpressAdView getAdView() {
-    return (NativeExpressAdView) viewGroup.getChildAt(0);
+  private AdView getAdView() {
+    return (AdView) viewGroup.getChildAt(0);
   }
 
   /**
    * Remove the inner AdView and set a new one
    */
   private void resetAdView() {
-    NativeExpressAdView oldAdView = getAdView();
-    NativeExpressAdView newAdView = new NativeExpressAdView(context);
+    AdView oldAdView = getAdView();
+    AdView newAdView = new AdView(context);
 
     viewGroup.removeViewAt(0);
     if (oldAdView != null) oldAdView.destroy();
@@ -166,11 +169,11 @@ public class RNFirebaseAdMobNativeExpress extends SimpleViewManager<ReactViewGro
       resetAdView();
     }
 
-    NativeExpressAdView adView = getAdView();
+    AdView adView = getAdView();
     adView.setAdUnitId(unitId);
     adView.setAdSize(size);
-    adView.setVideoOptions(videoOptions.build());
-    AdRequest adRequest = request.build();
+//    adView.setVideoOptions(videoOptions.build());
+    AdRequest adRequest = request;
 
     requested = true;
     adView.loadAd(adRequest);
@@ -180,7 +183,7 @@ public class RNFirebaseAdMobNativeExpress extends SimpleViewManager<ReactViewGro
    * Listen to Ad events
    */
   private void setAdListener() {
-    final NativeExpressAdView adView = getAdView();
+    final AdView adView = getAdView();
 
     adView.setAdListener(new AdListener() {
       @Override

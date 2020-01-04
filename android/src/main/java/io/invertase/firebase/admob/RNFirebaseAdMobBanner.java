@@ -14,6 +14,8 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
+import com.google.android.gms.ads.doubleclick.PublisherAdView;
 
 import java.util.Map;
 
@@ -27,7 +29,7 @@ public class RNFirebaseAdMobBanner extends SimpleViewManager<ReactViewGroup> {
   private RCTEventEmitter emitter;
   private Boolean requested = false;
   // Internal prop values
-  private AdRequest.Builder request;
+  private AdRequest request;
   private AdSize size;
   private String unitId;
 
@@ -155,7 +157,7 @@ public class RNFirebaseAdMobBanner extends SimpleViewManager<ReactViewGroup> {
     AdView adView = getAdView();
     adView.setAdUnitId(unitId);
     adView.setAdSize(size);
-    AdRequest adRequest = request.build();
+    AdRequest adRequest = request;
 
     requested = true;
     adView.loadAd(adRequest);

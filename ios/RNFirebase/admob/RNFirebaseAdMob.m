@@ -102,7 +102,7 @@ RCT_EXPORT_METHOD(clearInterstitial:
 }
 
 + (GADRequest *)buildRequest:(NSDictionary *)request {
-    GADRequest *builder = [GADRequest request];
+    GADRequest *builder = [DFPRequest request];
 
     if (request[@"tagForChildDirectedTreatment"]) [builder tagForChildDirectedTreatment:(BOOL) request[@"tagForChildDirectedTreatment"]];
     if (request[@"contentUrl"]) builder.contentURL = request[@"contentUrl"];

@@ -22,7 +22,9 @@
 }
 
 - (void)loadAd:(NSDictionary *)request {
-    [_interstitial loadRequest:[RNFirebaseAdMob buildRequest:request]];
+    DFPRequest *dfpRequest = (DFPRequest *)[RNFirebaseAdMob buildRequest:request];
+    dfpRequest.customTargeting = [request objectForKey:@"networkExtras"];
+    [_interstitial loadRequest:dfpRequest];
 }
 
 - (void)show {

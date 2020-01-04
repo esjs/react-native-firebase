@@ -2,6 +2,8 @@ package io.invertase.firebase.admob;
 
 
 import android.app.Activity;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -9,7 +11,9 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.doubleclick.PublisherInterstitialAd;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,10 +55,13 @@ public class RNFirebaseAdMob extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void interstitialLoadAd(String adUnit, ReadableMap request) {
-    RNFirebaseAdmobInterstitial interstitial = getOrCreateInterstitial(adUnit);
-    interstitial.loadAd(RNFirebaseAdMobUtils
-                          .buildRequest(request)
-                          .build());
+    getCurrentActivity().runOnUiThread(() -> {
+      RNFirebaseAdmobInterstitial interstitial = getOrCreateInterstitial(adUnit);
+
+      interstitial.loadAd(RNFirebaseAdMobUtils
+              .buildRequest(request));
+    });
+
   }
 
   @ReactMethod
@@ -65,10 +72,10 @@ public class RNFirebaseAdMob extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void rewardedVideoLoadAd(String adUnit, ReadableMap request) {
-    RNFirebaseAdMobRewardedVideo rewardedVideo = getOrCreateRewardedVideo(adUnit);
-    rewardedVideo.loadAd(RNFirebaseAdMobUtils
-                           .buildRequest(request)
-                           .build());
+//    RNFirebaseAdMobRewardedVideo rewardedVideo = getOrCreateRewardedVideo(adUnit);
+//    rewardedVideo.loadAd(RNFirebaseAdMobUtils
+//                           .buildRequest(request)
+//                           .build());
   }
 
   @ReactMethod
