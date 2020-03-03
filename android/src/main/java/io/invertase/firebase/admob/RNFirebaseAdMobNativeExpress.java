@@ -33,7 +33,7 @@ public class RNFirebaseAdMobNativeExpress extends SimpleViewManager<ReactViewGro
   private RCTEventEmitter emitter;
   private Boolean requested = false;
   // Internal prop values
-  private AdRequest request;
+  private PublisherAdRequest request;
   private VideoOptions.Builder videoOptions;
   private AdSize size;
   private String unitId;
@@ -55,23 +55,23 @@ public class RNFirebaseAdMobNativeExpress extends SimpleViewManager<ReactViewGro
     viewGroup = new ReactViewGroup(themedReactContext);
     emitter = themedReactContext.getJSModule(RCTEventEmitter.class);
 
-    AdView adView = new AdView(context);
+    PublisherAdView adView = new PublisherAdView(context);
     viewGroup.addView(adView);
     setAdListener();
 
     return viewGroup;
   }
 
-  private AdView getAdView() {
-    return (AdView) viewGroup.getChildAt(0);
+  private PublisherAdView getAdView() {
+    return (PublisherAdView) viewGroup.getChildAt(0);
   }
 
   /**
    * Remove the inner AdView and set a new one
    */
   private void resetAdView() {
-    AdView oldAdView = getAdView();
-    AdView newAdView = new AdView(context);
+    PublisherAdView oldAdView = getAdView();
+    PublisherAdView newAdView = new PublisherAdView(context);
 
     viewGroup.removeViewAt(0);
     if (oldAdView != null) oldAdView.destroy();
@@ -169,12 +169,11 @@ public class RNFirebaseAdMobNativeExpress extends SimpleViewManager<ReactViewGro
       resetAdView();
     }
 
-    AdView adView = getAdView();
+    PublisherAdView adView = getAdView();
     adView.setAdUnitId(unitId);
-    adView.setAdSize(size);
+    adView.setAdSizes(size);
 //    adView.setVideoOptions(videoOptions.build());
-    AdRequest adRequest = request;
-
+    PublisherAdRequest adRequest = request;
     requested = true;
     adView.loadAd(adRequest);
   }
@@ -183,7 +182,7 @@ public class RNFirebaseAdMobNativeExpress extends SimpleViewManager<ReactViewGro
    * Listen to Ad events
    */
   private void setAdListener() {
-    final AdView adView = getAdView();
+    final PublisherAdView adView = getAdView();
 
     adView.setAdListener(new AdListener() {
       @Override

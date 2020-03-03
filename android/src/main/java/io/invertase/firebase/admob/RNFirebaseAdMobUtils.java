@@ -13,6 +13,8 @@ import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.VideoOptions;
 import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -32,25 +34,25 @@ class RNFirebaseAdMobUtils {
     WritableMap map = Arguments.createMap();
 
     switch (errorCode) {
-      case AdRequest.ERROR_CODE_INTERNAL_ERROR:
+      case PublisherAdRequest.ERROR_CODE_INTERNAL_ERROR:
         map.putString("code", "admob/error-code-internal-error");
         map.putString(
           "message",
           "Something happened internally; for instance, an invalid response was received from the ad server."
         );
         break;
-      case AdRequest.ERROR_CODE_INVALID_REQUEST:
+      case PublisherAdRequest.ERROR_CODE_INVALID_REQUEST:
         map.putString("code", "admob/error-code-invalid-request");
         map.putString(
           "message",
           "The ad request was invalid; for instance, the ad unit ID was incorrect."
         );
         break;
-      case AdRequest.ERROR_CODE_NETWORK_ERROR:
+      case PublisherAdRequest.ERROR_CODE_NETWORK_ERROR:
         map.putString("code", "admob/error-code-network-error");
         map.putString("message", "The ad request was unsuccessful due to network connectivity.");
         break;
-      case AdRequest.ERROR_CODE_NO_FILL:
+      case PublisherAdRequest.ERROR_CODE_NO_FILL:
         map.putString("code", "admob/error-code-no-fill");
         map.putString(
           "message",
@@ -62,8 +64,8 @@ class RNFirebaseAdMobUtils {
     return map;
   }
 
-  static AdRequest buildRequest(ReadableMap request) {
-    AdRequest.Builder requestBuilder = new AdRequest.Builder();
+  static PublisherAdRequest buildRequest(ReadableMap request) {
+    PublisherAdRequest.Builder requestBuilder = new PublisherAdRequest.Builder();
     Bundle extras = new Bundle();
 
     if (request.hasKey("isDesignedForFamilies")) {
@@ -98,13 +100,13 @@ class RNFirebaseAdMobUtils {
       String gender = request.getString("gender");
       switch (gender) {
         case "male":
-          requestBuilder.setGender(AdRequest.GENDER_MALE);
+          requestBuilder.setGender(PublisherAdRequest.GENDER_MALE);
           break;
         case "female":
-          requestBuilder.setGender(AdRequest.GENDER_FEMALE);
+          requestBuilder.setGender(PublisherAdRequest.GENDER_FEMALE);
           break;
         case "unknown":
-          requestBuilder.setGender(AdRequest.GENDER_UNKNOWN);
+          requestBuilder.setGender(PublisherAdRequest.GENDER_UNKNOWN);
           break;
       }
     }
@@ -115,7 +117,7 @@ class RNFirebaseAdMobUtils {
 
     for (Object deviceId : testDevicesList) {
       if (deviceId == "DEVICE_ID_EMULATOR") {
-        requestBuilder.addTestDevice(AdRequest.DEVICE_ID_EMULATOR);
+        requestBuilder.addTestDevice(PublisherAdRequest.DEVICE_ID_EMULATOR);
       } else {
         requestBuilder.addTestDevice((String) deviceId);
       }
@@ -139,6 +141,24 @@ class RNFirebaseAdMobUtils {
     optionsBuilder.setStartMuted(options.getBoolean("startMuted"));
 
     return optionsBuilder;
+  }
+
+  /**
+   * Mat the size prop to the AdSize[]
+   *
+   * @param value
+   * @return
+   */
+  static ArrayList<AdSize> stringToAdSizeArray(String value) {
+    String[] stringSplit = value.split(",");
+
+    ArrayList<AdSize> result = new ArrayList<AdSize>();
+
+    for (int i = 0; i < stringSplit.length; i++) {
+      result.add(stringToAdSize(stringSplit[i]));
+    }
+
+    return result;
   }
 
   /**

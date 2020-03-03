@@ -6,11 +6,12 @@
 
 #if __has_include(<GoogleMobileAds/GADMobileAds.h>)
 
-- (void)initBanner:(GADAdSize)adSize {
+- (void)initBanner:(NSArray *)adSizes {
     if (_requested) {
         [_banner removeFromSuperview];
     }
-    _banner = [[GADBannerView alloc] initWithAdSize:adSize];
+    _banner = [[DFPBannerView alloc] init];
+    ((DFPBannerView *)_banner).validAdSizes = adSizes;
     _banner.rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
     _banner.delegate = self;
 }
@@ -40,11 +41,14 @@
         return;
     }
 
-    [self initBanner:[RNFirebaseAdMob stringToAdSize:_size]];
+    [self initBanner:[RNFirebaseAdMob stringToAdSizes:_size]];
     [self addSubview:_banner];
     _banner.adUnitID = _unitId;
     [self setRequested:YES];
-    [_banner loadRequest:[RNFirebaseAdMob buildRequest:_request]];
+    DFPRequest *request = (DFPRequest *)[RNFirebaseAdMob buildRequest:_request];
+    request.customTargeting = [_request objectForKey:@"networkExtras"];
+    [_banner loadRequest:request];
+    // [_banner loadRequest:[RNFirebaseAdMob buildRequest:_request]];
     [self sendEvent:@"onSizeChange" payload:@{
       @"width": @(_banner.bounds.size.width),
       @"height": @(_banner.bounds.size.height),

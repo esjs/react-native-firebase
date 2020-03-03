@@ -17,6 +17,7 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
 import com.google.android.gms.ads.doubleclick.PublisherAdView;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import javax.annotation.Nullable;
@@ -29,7 +30,8 @@ public class RNFirebaseAdMobBanner extends SimpleViewManager<ReactViewGroup> {
   private RCTEventEmitter emitter;
   private Boolean requested = false;
   // Internal prop values
-  private AdRequest request;
+  private PublisherAdRequest request;
+  private ArrayList<AdSize> sizes = new ArrayList<AdSize>();
   private AdSize size;
   private String unitId;
 
@@ -50,23 +52,23 @@ public class RNFirebaseAdMobBanner extends SimpleViewManager<ReactViewGroup> {
     viewGroup = new ReactViewGroup(themedReactContext);
     emitter = themedReactContext.getJSModule(RCTEventEmitter.class);
 
-    AdView adView = new AdView(context);
+    PublisherAdView adView = new PublisherAdView(context);
     viewGroup.addView(adView);
     setAdListener();
 
     return viewGroup;
   }
 
-  private AdView getAdView() {
-    return (AdView) viewGroup.getChildAt(0);
+  private PublisherAdView getAdView() {
+    return (PublisherAdView) viewGroup.getChildAt(0);
   }
 
   /**
    * Remove the inner AdView and set a new one
    */
   private void resetAdView() {
-    AdView oldAdView = getAdView();
-    AdView newAdView = new AdView(context);
+    PublisherAdView oldAdView = getAdView();
+    PublisherAdView newAdView = new PublisherAdView(context);
 
     viewGroup.removeViewAt(0);
     if (oldAdView != null) oldAdView.destroy();
@@ -118,19 +120,21 @@ public class RNFirebaseAdMobBanner extends SimpleViewManager<ReactViewGroup> {
    */
   @ReactProp(name = "size")
   public void setSize(ReactViewGroup view, String value) {
-    size = RNFirebaseAdMobUtils.stringToAdSize(value);
+     // size = RNFirebaseAdMobUtils.stringToAdSize(value);
+
+     sizes = RNFirebaseAdMobUtils.stringToAdSizeArray(value);
 
     // Send the width & height back to the JS
     int width;
     int height;
     WritableMap payload = Arguments.createMap();
 
-    if (size == AdSize.SMART_BANNER) {
-      width = (int) PixelUtil.toDIPFromPixel(size.getWidthInPixels(context));
-      height = (int) PixelUtil.toDIPFromPixel(size.getHeightInPixels(context));
+    if (sizes.get(0) == AdSize.SMART_BANNER) {
+      width = (int) PixelUtil.toDIPFromPixel(sizes.get(0).getWidthInPixels(context));
+      height = (int) PixelUtil.toDIPFromPixel(sizes.get(0).getHeightInPixels(context));
     } else {
-      width = size.getWidth();
-      height = size.getHeight();
+      width = sizes.get(0).getWidth();
+      height = sizes.get(0).getHeight();
     }
 
     payload.putDouble("width", width);
@@ -145,7 +149,7 @@ public class RNFirebaseAdMobBanner extends SimpleViewManager<ReactViewGroup> {
    */
   private void requestAd() {
     // If the props have not yet been set
-    if (size == null || unitId == null || request == null) {
+    if (sizes == null || unitId == null || request == null) {
       return;
     }
 
@@ -154,10 +158,13 @@ public class RNFirebaseAdMobBanner extends SimpleViewManager<ReactViewGroup> {
       resetAdView();
     }
 
-    AdView adView = getAdView();
+    AdSize[] sizesArr = new AdSize[sizes.size()];
+    sizesArr = sizes.toArray(sizesArr);
+
+    PublisherAdView adView = getAdView();
     adView.setAdUnitId(unitId);
-    adView.setAdSize(size);
-    AdRequest adRequest = request;
+    adView.setAdSizes(sizesArr);
+    PublisherAdRequest adRequest = request;
 
     requested = true;
     adView.loadAd(adRequest);
@@ -167,7 +174,7 @@ public class RNFirebaseAdMobBanner extends SimpleViewManager<ReactViewGroup> {
    * Listen to Ad events
    */
   private void setAdListener() {
-    final AdView adView = getAdView();
+    final PublisherAdView adView = getAdView();
 
     adView.setAdListener(new AdListener() {
       @Override

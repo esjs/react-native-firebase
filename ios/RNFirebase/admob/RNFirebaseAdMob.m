@@ -189,6 +189,19 @@ RCT_EXPORT_METHOD(clearInterstitial:
     };
 }
 
++ (NSArray *)stringToAdSizes:(NSString *)value {
+    NSArray *sizes  = [value componentsSeparatedByString:@","];
+    
+    NSMutableArray *resultSizes = [[NSMutableArray alloc] init];
+    
+    for (int i = 0; i < sizes.count; i++) {
+        GADAdSize tempSize = [RNFirebaseAdMob stringToAdSize:sizes[i]];
+        [resultSizes addObject:NSValueFromGADAdSize(tempSize)];
+    }
+    
+    return resultSizes;
+}
+
 + (GADAdSize)stringToAdSize:(NSString *)value {
     NSError *error = nil;
     NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"([0-9]+)x([0-9]+)" options:0 error:&error];

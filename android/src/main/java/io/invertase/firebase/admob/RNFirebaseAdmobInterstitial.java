@@ -8,6 +8,8 @@ import com.facebook.react.bridge.WritableMap;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
+import com.google.android.gms.ads.doubleclick.PublisherInterstitialAd;
 
 import javax.annotation.Nullable;
 
@@ -15,7 +17,7 @@ import io.invertase.firebase.Utils;
 
 class RNFirebaseAdmobInterstitial {
 
-  private InterstitialAd interstitialAd;
+  private PublisherInterstitialAd interstitialAd;
   private RNFirebaseAdMob adMob;
   private String adUnit;
 
@@ -26,9 +28,9 @@ class RNFirebaseAdmobInterstitial {
     Activity activity = adMob.getActivity();
     // Some ads won't work without passing activity, or the app will crash
     if (activity == null) {
-      interstitialAd = new InterstitialAd(adMob.getContext());
+      interstitialAd = new PublisherInterstitialAd(adMob.getContext());
     } else {
-      interstitialAd = new InterstitialAd(activity);
+      interstitialAd = new PublisherInterstitialAd(activity);
     }
     interstitialAd.setAdUnitId(adUnit);
 
@@ -68,7 +70,7 @@ class RNFirebaseAdmobInterstitial {
    *
    * @param adRequest
    */
-  void loadAd(final AdRequest adRequest) {
+  void loadAd(final PublisherAdRequest adRequest) {
     Activity activity = adMob.getActivity();
     if (activity != null) {
       activity.runOnUiThread(new Runnable() {

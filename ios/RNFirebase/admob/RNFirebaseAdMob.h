@@ -19,6 +19,7 @@
 + (GADVideoOptions *)buildVideoOptions:(NSDictionary *)options;
 + (NSDictionary *)errorCodeToDictionary:(NSError *)error;
 + (GADAdSize)stringToAdSize:(NSString *)value;
++ (NSArray *)stringToAdSizes:(NSString *)value;
 @end
 
 #else
