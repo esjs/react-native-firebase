@@ -149,7 +149,7 @@ public class RNFirebaseAdMobBanner extends SimpleViewManager<ReactViewGroup> {
    */
   private void requestAd() {
     // If the props have not yet been set
-    if (sizes == null || unitId == null || request == null) {
+    if (sizes.size() == 0 || unitId == null || request == null) {
       return;
     }
 
