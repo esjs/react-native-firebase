@@ -18,6 +18,7 @@
 @property (nonatomic, copy) RCTBubblingEventBlock onBannerEvent;
 
 - (void)requestAd;
+- (void)destroy;
 
 @end
 #else

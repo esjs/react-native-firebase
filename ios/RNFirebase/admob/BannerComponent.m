@@ -16,6 +16,13 @@
     _banner.delegate = self;
 }
 
+- (void)destroy
+{
+    [_banner removeFromSuperview];
+    _banner.delegate = nil;
+    _banner = nil;
+}
+
 - (void)setUnitId:(NSString *)unitId {
     _unitId = unitId;
     [self requestAd];
