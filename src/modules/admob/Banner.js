@@ -1,12 +1,15 @@
 import React, { useRef, useEffect } from 'react';
 import AdMobComponent from './AdMobComponent';
+import { Platform } from 'react-native';
 
 function Banner({ ...props
 }) {
   const ref = useRef()
   useEffect(()=>{
     return ()=> {
-      ref.current.destroy()
+      if (Platform.OS == 'ios') {
+        ref.current.destroy()
+      }
     }
   })
   return <AdMobComponent ref={ref} {...props} class="RNFirebaseAdMobBanner" />;
