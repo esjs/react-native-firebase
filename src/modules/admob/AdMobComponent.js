@@ -1,5 +1,5 @@
 import React from 'react';
-import { ViewPropTypes, requireNativeComponent, Platform } from 'react-native';
+import { ViewPropTypes, requireNativeComponent, Platform, UIManager, findNodeHandle } from 'react-native';
 import PropTypes from 'prop-types';
 import EventTypes, { NativeExpressEventTypes } from './EventTypes';
 import { nativeToJSError } from '../../utils';
@@ -37,8 +37,17 @@ function getNativeComponent(name) {
 }
 
 class AdMobComponent extends React.Component {
-  static propTypes = adMobPropTypes;
 
+  destroy = () => {
+    UIManager.dispatchViewManagerCommand(
+      findNodeHandle(this),
+      UIManager.getViewManagerConfig('RNFirebaseAdMobBanner').Commands
+        .destroy,
+      [],
+    );
+  };
+
+  static propTypes = adMobPropTypes;
   static defaultProps = {
     request: new AdRequest().addTestDevice().build(),
     video: new VideoOptions().build(),
